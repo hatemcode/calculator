@@ -1,0 +1,102 @@
+/**
+ * @Calculator
+ * @author Hatem A. <hatem@tuta.io>
+ * @version 1.0
+ * @licence Licensed under the Apache License, Version 2.0
+ */
+ 
+@import 'https://fonts.googleapis.com/css?family=Orbitron';
+
+body {
+  background-color: #C3C6C7;
+  font-family: Orbitron;
+  
+  margin-top: 3em; 
+}
+
+footer {
+  padding: 1em;  
+}
+
+#calculator {
+  background-color: #DEE0E0; 
+  border-radius: 1em;
+  
+  width: 350px;
+  height: 390px;
+  
+  margin: 0 auto;
+  padding: 0.3em 1em 1em 1em;
+}
+
+#calculator #title {
+  font-size: 1.5em !important; 
+}
+
+#calculator #screen {
+  background-color: #99B596;
+  
+  width: 100%;
+  height: 5em;
+  
+  border-radius: 1em;
+}
+
+#calculator  #current-screen-item {
+  font-size: 2.5em;
+  float: right;
+}
+
+#calculator #current-screen-formula {
+  float: right;
+  
+  margin-top: 3.3em;
+  margin-right: -1em;
+}
+
+#calculator #buttons {
+  padding-top: 1em;
+  padding-right: 0em;
+  padding-left: 0em;
+  font-weight: bold;
+}
+
+#calculator #buttons button.btn {
+  font-weight: bold !important;
+  height: 3em;
+  margin-bottom: 0.4em;
+  color: white;
+}
+
+#calculator #buttons div.buttons button.btn:hover {
+  background-color: black;
+}
+
+#calculator #buttons button.small-button {
+  width: 5.39em;
+}
+
+#calculator #buttons button.red {
+  background-color: #B5145F;
+}
+
+#calculator #buttons button.gray {
+  background-color: #666063;
+}
+
+#calculator #buttons button.long {
+  height: 6.4em !important;
+  z-index: 10;
+}
+
+#calculator #buttons button.wide {
+  width: 10.9em !important;
+}
+
+#calculator #buttons div.beside-equal-col {
+  margin-left:4px; 
+}
+
+#calculator #buttons div.equal-col {
+  margin-left:-26px;
+}
