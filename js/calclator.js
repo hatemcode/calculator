@@ -21,7 +21,7 @@ var calculator = (function(){
 
   // modes
   var resultMode;
-  
+
   // selectors
   var CURRENT_SCREEN_ITEM_SELECTOR = "#current-screen-item";
   var CURRENT_SCREEN_FORMULA_SELECTOR = "#current-screen-formula";
@@ -78,7 +78,7 @@ var calculator = (function(){
     resetLocks();
     resetModes();
   }
-  
+
   /**
     * Reset screen.
     */  
@@ -103,7 +103,7 @@ var calculator = (function(){
   var resetModes = function(){
     setResultMode(false);
   }
-  
+
   /**
     * Get current screen item.
     * @returns {String} currentScreenItem.    
@@ -229,7 +229,7 @@ var calculator = (function(){
   var setMinusLock = function(lock){
     minusLock = lock;
   }
-  
+
   /**
     * Is result mode on ?.
     * @return {Boolean} resultMode.
@@ -245,7 +245,7 @@ var calculator = (function(){
   var setResultMode = function(mode){
     resultMode = mode;
   }
-  
+
   /**
     * Remove last screen item.
     */  
@@ -255,7 +255,7 @@ var calculator = (function(){
     var newFormula = formula.substr(0,formula.length - 1);
     setCurrentScreenFormula(newFormula);
   }
-  
+
   /**
     * Register events.
     */
@@ -382,7 +382,7 @@ var calculator = (function(){
     var infix = getCurrentScreenFormula();
     var currentNumber = "";
     var token;
-    var prevToken;
+    var prevToken = "";
     var operands = "-+÷×^";
     var operandOne;
     var operandTwo;     
@@ -391,9 +391,9 @@ var calculator = (function(){
 
     for(var i=0;i < infix.length;i++){
       token = infix[i];
-      prevToken = infix[i-1];
+      if(i > 0) prevToken = infix[i-1];
 
-      if(isNumber(token) || isDot(token) || (isSign(token) && isSign(prevToken) && token == "-")){
+      if(isNumber(token) || isDot(token) || (isSign(token) && (isSign(prevToken) || prevToken == "") && token == "-")){
         currentNumber += token;
         if(isSign(infix[i+1]) || i == infix.length-1){
           postfix.push(parseFloat(currentNumber));
@@ -446,13 +446,13 @@ var calculator = (function(){
   var dot = function(){
     if(!isResultModeOn() && !isDotLocked()){
       var screenItem = getCurrentScreenItem();
-      
+
       if(!isNumber(screenItem) || screenItem == ""){
         appendCurrentScreenFormula("0.");
       }else{
         appendCurrentScreenFormula(".");
       }
-      
+
       setCurrentScreenItem(".");    
       setDotLock(true);      
     }
@@ -463,24 +463,34 @@ var calculator = (function(){
     */
   var sign = function(sig){
     if(!isResultModeOn() && (!isSignLocked() || !isMinusLocked())){
-      
+
       setEqualLock(true);
       setSignLock(true);
       setDotLock(false);
-      
+
       var screenItem = getCurrentScreenItem();
       var currentFormula = getCurrentScreenFormula();
-      
-      if(isNumber(screenItem)){
-        appendCurrentScreenFormula(sig);        
-      }else if(isDot(screenItem)){
-        appendCurrentScreenFormula("0" + sig);
-        setDotLock(false);
-      }else if(isSign(screenItem) && sig == "-"){
+
+      if(currentFormula != ""){
+
+        if(isNumber(screenItem)){
+          appendCurrentScreenFormula(sig);        
+        }else if(isDot(screenItem)){
+          appendCurrentScreenFormula("0" + sig);
+          setDotLock(false);
+        }else if(isSign(screenItem) && sig == "-"){
+          appendCurrentScreenFormula(sig);
+          setMinusLock(true);
+        }
+
+        setCurrentScreenItem(sig); 
+
+      }else if(currentFormula == "" && sig == "-"){
         appendCurrentScreenFormula(sig);
-        setMinusLock(true);
+        setMinusLock(true);  
+        setCurrentScreenItem(sig); 
       }
-      setCurrentScreenItem(sig);
+
     }   
   }  
 
@@ -493,14 +503,14 @@ var calculator = (function(){
     }else{
       var formula = getCurrentScreenFormula().replace(/=.*$/,"");
       setCurrentScreenFormula(formula);
-      
+
       var item = getCurrentScreenFormula();
       item = item[item.length-1];
       setCurrentScreenItem(item);
       setSignLock(false);
       setResultMode(false);
     }
-    
+
   }
 
   /**
@@ -514,12 +524,12 @@ var calculator = (function(){
       var result = resolvePostfix(postfix);
       var screenItem = getCurrentScreenItem();
       var screenFormula = getCurrentScreenFormula();
-      
+
       if(isDot(screenItem)){
         screenFormula += "0";
         setCurrentScreenFormula(screenFormula);
       }
-      
+
       var finalScreenFromula = screenFormula + "=" + result;
       setCurrentScreenFormula(finalScreenFromula);
       setCurrentScreenItem(result);
@@ -536,3 +546,8 @@ var calculator = (function(){
   }
 
 }());
+
+
+$(document).ready(function(){
+  calculator.init();
+});
