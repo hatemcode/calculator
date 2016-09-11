@@ -546,8 +546,3 @@ var calculator = (function(){
   }
 
 }());
-
-
-$(document).ready(function(){
-  calculator.init();
-});
