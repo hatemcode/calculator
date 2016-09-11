@@ -16,8 +16,12 @@ var calculator = (function(){
   // locks & toggles
   var dotLock;
   var equalLock;
-  var startNewFormula;
+  var signLock;
+  var minusLock;
 
+  // modes
+  var resultMode;
+  
   // selectors
   var CURRENT_SCREEN_ITEM_SELECTOR = "#current-screen-item";
   var CURRENT_SCREEN_FORMULA_SELECTOR = "#current-screen-formula";
@@ -62,12 +66,7 @@ var calculator = (function(){
     * Initialze calculator for first time use.
     */
   var init = function(){
-
-    setCurrentScreenItem(0);
-    setCurrentScreenFormula("");
-    setDotLock(false);
-    setEqualLock(true);
-    setNewFormulaStart(true);
+    reset();
     eventsRegister();
   }
 
@@ -75,12 +74,36 @@ var calculator = (function(){
     * Reset calculator.
     */
   var reset = function(){
+    resetScreen();
+    resetLocks();
+    resetModes();
+  }
+  
+  /**
+    * Reset screen.
+    */  
+  var resetScreen = function(){
     setCurrentScreenItem(0);
-    setCurrentScreenFormula("");
-    setDotLock(false);
-    setNewFormulaStart(false);
+    setCurrentScreenFormula("");    
   }
 
+  /**
+    * Reset locks.
+    */  
+  var resetLocks = function(){
+    setEqualLock(true);
+    setSignLock(true);
+    setDotLock(false);    
+    setMinusLock(false);
+  }
+
+  /**
+    * Reset modes.
+    */  
+  var resetModes = function(){
+    setResultMode(false);
+  }
+  
   /**
     * Get current screen item.
     * @returns {String} currentScreenItem.    
@@ -175,15 +198,64 @@ var calculator = (function(){
     dotLock = lock;
   }
 
-
-  var isNewFormulaMustStart = function(){
-    return startNewFormula;
+  /**
+    * Is sign locked ?.
+    * @return {Boolean} signLock.
+    */
+  var isSignLocked = function(){
+    return signLock;
   }
 
-  var setNewFormulaStart = function(toggle){
-    startNewFormula = toggle;
+  /**
+    * Set sign lock status.
+    * @param {Boolean} lock.
+    */
+  var setSignLock = function(lock){
+    signLock = lock;
   }
 
+  /**
+    * Is minus locked ?.
+    * @return {Boolean} minusLock.
+    */
+  var isMinusLocked = function(){
+    return minusLock;
+  }
+
+  /**
+    * Set minus lock status.
+    * @param {Boolean} lock.
+    */
+  var setMinusLock = function(lock){
+    minusLock = lock;
+  }
+  
+  /**
+    * Is result mode on ?.
+    * @return {Boolean} resultMode.
+    */
+  var isResultModeOn = function(){
+    return resultMode;
+  }
+
+  /**
+    * Set result mode.
+    * @param {Boolean} mode.
+    */
+  var setResultMode = function(mode){
+    resultMode = mode;
+  }
+  
+  /**
+    * Remove last screen item.
+    */  
+  var removeLastCurrentScreenItem = function(){
+    setCurrentScreenItem(0);
+    var formula = getCurrentScreenFormula();
+    var newFormula = formula.substr(0,formula.length - 1);
+    setCurrentScreenFormula(newFormula);
+  }
+  
   /**
     * Register events.
     */
@@ -310,6 +382,7 @@ var calculator = (function(){
     var infix = getCurrentScreenFormula();
     var currentNumber = "";
     var token;
+    var prevToken;
     var operands = "-+÷×^";
     var operandOne;
     var operandTwo;     
@@ -318,8 +391,9 @@ var calculator = (function(){
 
     for(var i=0;i < infix.length;i++){
       token = infix[i];
+      prevToken = infix[i-1];
 
-      if(isNumber(token) || isDot(token)){
+      if(isNumber(token) || isDot(token) || (isSign(token) && isSign(prevToken) && token == "-")){
         currentNumber += token;
         if(isSign(infix[i+1]) || i == infix.length-1){
           postfix.push(parseFloat(currentNumber));
@@ -358,23 +432,28 @@ var calculator = (function(){
     * Any number button.
     */
   var num = function(number){
-    if(isNewFormulaMustStart()){
-      ac();
+    if(!isResultModeOn()){
+      setCurrentScreenItem(number);
+      appendCurrentScreenFormula(number);
+      setEqualLock(false);
+      setSignLock(false);
     }
-
-    setCurrentScreenItem(number);
-    appendCurrentScreenFormula(number);
-    setEqualLock(false);
   }
 
   /**
     * Dot button.
     */
   var dot = function(){
-    if(!isDotLocked()){
-      var number = getCurrentScreenItem();
-      appendCurrentScreenItem(".");
-      appendCurrentScreenFormula(".");
+    if(!isResultModeOn() && !isDotLocked()){
+      var screenItem = getCurrentScreenItem();
+      
+      if(!isNumber(screenItem) || screenItem == ""){
+        appendCurrentScreenFormula("0.");
+      }else{
+        appendCurrentScreenFormula(".");
+      }
+      
+      setCurrentScreenItem(".");    
       setDotLock(true);      
     }
   }
@@ -383,25 +462,45 @@ var calculator = (function(){
     * Any sign button.
     */
   var sign = function(sig){
-    setEqualLock(true);
-    var lastScreenItem = getCurrentScreenItem();
-    var currentFormula = getCurrentScreenFormula();
-    if(!isSign(lastScreenItem) && currentFormula != ""){
+    if(!isResultModeOn() && (!isSignLocked() || !isMinusLocked())){
+      
+      setEqualLock(true);
+      setSignLock(true);
+      setDotLock(false);
+      
+      var screenItem = getCurrentScreenItem();
+      var currentFormula = getCurrentScreenFormula();
+      
+      if(isNumber(screenItem)){
+        appendCurrentScreenFormula(sig);        
+      }else if(isDot(screenItem)){
+        appendCurrentScreenFormula("0" + sig);
+        setDotLock(false);
+      }else if(isSign(screenItem) && sig == "-"){
+        appendCurrentScreenFormula(sig);
+        setMinusLock(true);
+      }
       setCurrentScreenItem(sig);
-      appendCurrentScreenFormula(sig);     
-    }else{
-      ce();
-      sign(sig);
-    }
-
-    setDotLock(false);
+    }   
   }  
 
   /**
     * CE button.
     */
   var ce = function(){
-    if(getCurrentScreenFormula() !== "") removeLastCurrentScreenItem();
+    if(!isResultModeOn()){
+      if(getCurrentScreenFormula() !== "") removeLastCurrentScreenItem();
+    }else{
+      var formula = getCurrentScreenFormula().replace(/=.*$/,"");
+      setCurrentScreenFormula(formula);
+      
+      var item = getCurrentScreenFormula();
+      item = item[item.length-1];
+      setCurrentScreenItem(item);
+      setSignLock(false);
+      setResultMode(false);
+    }
+    
   }
 
   /**
@@ -412,11 +511,19 @@ var calculator = (function(){
     if(!isEqualLocked()){
 
       var postfix = infixToPostfix();
-      var result=resolvePostfix(postfix);
-      var finalScreenFromula = getCurrentScreenFormula() + "=" + result;
+      var result = resolvePostfix(postfix);
+      var screenItem = getCurrentScreenItem();
+      var screenFormula = getCurrentScreenFormula();
+      
+      if(isDot(screenItem)){
+        screenFormula += "0";
+        setCurrentScreenFormula(screenFormula);
+      }
+      
+      var finalScreenFromula = screenFormula + "=" + result;
       setCurrentScreenFormula(finalScreenFromula);
       setCurrentScreenItem(result);
-      setNewFormulaStart(true);
+      setResultMode(true);
     }
   }
 
