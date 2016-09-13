@@ -1,3 +1,5 @@
+# Hatem Calculator (Simple Web-Based Calculator)
+
 ## How to use as end-user ?
 
 1. Just open the page (calculator.html) in your modern browser. 
