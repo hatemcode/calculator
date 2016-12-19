@@ -1,0 +1,33 @@
+{
+  "name": "hatem-calculator",
+  "productName": "hatem-calculator",
+  "version": "1.0.0",
+  "main": "main.js",
+  "description": "Cross-Platform Simple nice-looking Calculator",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hatemcode/calculator.git"
+  },
+  "keywords": [
+    "Electron",
+    "Calculator",
+    "Cross-Platform"
+  ],
+  "author": "Hatem A.",
+  "license": "Apache 2.0",
+  "bugs": {
+    "url": "https://github.com/hatemcode/calculator/issues"
+  },
+  "homepage": "https://github.com/hatemcode/calculator#readme",
+  "devDependencies": {
+    "electron": "^1.4.11"
+  },
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "electron": "^1.4.11",
+    "jquery": "^3.1.1"
+  }
+}

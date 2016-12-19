@@ -1,41 +1,68 @@
 /**
- * @Calculator
+ * @Hatem Calculator
  * @author Hatem A. <hatem@tuta.io>
  * @version 1.0
  * @licence Licensed under the Apache License, Version 2.0
  */
 
-@import 'https://fonts.googleapis.com/css?family=Orbitron';
-
-body {
-  background-color: #C3C6C7;
-  font-family: Orbitron;
-  
-  margin-top: 3em; 
+@font-face {
+  font-family: 'Orbitron';
+  src: url('../fonts/orbitron-light-webfont.eot');
+  src: url('../fonts/orbitron-light-webfont.woff') format('woff'),
+       url('../fonts/orbitron-light-webfont.ttf')  format('truetype'),
+       url('../fonts/orbitron-light-webfont.svg#svgFontName') format('svg');
 }
 
-footer {
-  padding: 1em;  
+body {
+  background-color: transparent;
+  font-family: Orbitron;
+  margin-top: 3em;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+pre {
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+    white-space: -pre-wrap;
+    white-space: -o-pre-wrap;
+    word-wrap: break-word;
 }
 
 #calculator {
-  background-color: #DEE0E0; 
+  background-color: #DEE0E0;
   border-radius: 1em;
-  
+
   width: 350px;
   min-height: 390px;
-  
+
   margin: 0 auto;
   padding: 0.3em 1em 1em 1em;
+
+  -webkit-app-region: drag;
 }
 
 #calculator #title {
-  font-size: 1.5em !important; 
+  font-size: 1.5em !important;
+  text-align: left;
+}
+
+#calculator #app-buttons {
+  float: right;
+  list-style: none;
+  margin-top:-2.5em;
+}
+
+#calculator #app-buttons li{
+  display: inline-block;
+  margin-right: 2px;
 }
 
 #calculator #screen {
   background-color: #99B596;
-  
+
   min-width: 310px;
   min-height: 5em;
 
@@ -46,19 +73,19 @@ footer {
   display: block;
   font-size: 2.5em;
   width: 310px;
-  
+
   text-align: left;
   word-wrap: break-word;
 }
 
 #calculator #current-screen-formula {
   display: block;
-  
+
   margin-top: 1em;
   padding-right: 1em;
-  
+
   width: 310px;
-  
+
   text-align: right;
   word-wrap: break-word;
 }
@@ -103,9 +130,23 @@ footer {
 }
 
 #calculator #buttons div.beside-equal-col {
-  margin-left:4px; 
+  margin-left:4px;
 }
 
 #calculator #buttons div.equal-col {
   margin-left:-26px;
+}
+
+#info-modal {
+    top: 7em;
+}
+
+#licence-modal .modal-body{
+    height: 250px;
+    overflow-y: auto;
+}
+
+.modal-backdrop.in {
+  filter: alpha(opacity=0);
+  opacity: 0;
 }

@@ -1,9 +1,12 @@
 /**
- * Calculator
+ * Hatem Calculator
  * @author Hatem A. <hatem@tuta.io>
  * @version 1.0
  * @licence Licensed under the Apache License, Version 2.0
  */
+
+ window.$ = window.jQuery = require('jquery');
+ require('bootstrap');
 
 var calculator = (function(){
 
@@ -40,7 +43,7 @@ var calculator = (function(){
     var top = 0;
 
     var push = function(element){
-      elements[top++] = element; 
+      elements[top++] = element;
     };
 
     var pop = function() {
@@ -81,32 +84,32 @@ var calculator = (function(){
 
   /**
     * Reset screen.
-    */  
+    */
   var resetScreen = function(){
     setCurrentScreenItem(0);
-    setCurrentScreenFormula("");    
+    setCurrentScreenFormula("");
   }
 
   /**
     * Reset locks.
-    */  
+    */
   var resetLocks = function(){
     setEqualLock(true);
     setSignLock(true);
-    setDotLock(false);    
+    setDotLock(false);
     setMinusLock(false);
   }
 
   /**
     * Reset modes.
-    */  
+    */
   var resetModes = function(){
     setResultMode(false);
   }
 
   /**
     * Get current screen item.
-    * @returns {String} currentScreenItem.    
+    * @returns {String} currentScreenItem.
     */
   var getCurrentScreenItem = function(){
     return currentScreenItem;
@@ -115,7 +118,7 @@ var calculator = (function(){
   /**
     * Set current screen item.
     * @param {String} item - current number or sign.
-    */ 
+    */
   var setCurrentScreenItem = function(item){
     currentScreenItem = item;
     $(CURRENT_SCREEN_ITEM_SELECTOR).html(item);
@@ -124,7 +127,7 @@ var calculator = (function(){
   /**
     * Append to current screent item.
     * @param {String} text.
-    */ 
+    */
   var appendCurrentScreenItem = function(text){
     var newItem = getCurrentScreenItem() + text;
     setCurrentScreenItem(newItem);
@@ -132,7 +135,7 @@ var calculator = (function(){
 
   /**
     * Remove last screen item.
-    */  
+    */
   var removeLastCurrentScreenItem = function(){
     setCurrentScreenItem(0);
     var formula = getCurrentScreenFormula();
@@ -143,7 +146,7 @@ var calculator = (function(){
   /**
     * Get current screen formula.
     * @return {String} currentScreenFormula.
-    */ 
+    */
   var getCurrentScreenFormula = function(){
     return currentScreenFormula;
   }
@@ -151,7 +154,7 @@ var calculator = (function(){
   /**
     * Set current screen formula.
     * @param {String} formula.
-    */ 
+    */
   var setCurrentScreenFormula = function(formula){
     currentScreenFormula = formula;
     $(CURRENT_SCREEN_FORMULA_SELECTOR).html(formula);
@@ -169,7 +172,7 @@ var calculator = (function(){
   /**
     * Is equal sign locked ?.
     * @return {Boolean} equalLock.
-    */ 
+    */
   var isEqualLocked = function(){
     return equalLock;
   }
@@ -248,7 +251,7 @@ var calculator = (function(){
 
   /**
     * Remove last screen item.
-    */  
+    */
   var removeLastCurrentScreenItem = function(){
     setCurrentScreenItem(0);
     var formula = getCurrentScreenFormula();
@@ -279,23 +282,23 @@ var calculator = (function(){
 
     $(SUBSTRACT_SELECTOR).click(function(){
       sign("-");
-    }); 
+    });
 
     $(DIVIDE_SELECTOR).click(function(){
       sign("÷");
-    }); 
+    });
 
     $(MULTIPLY_SELECTOR).click(function(){
       sign("×");
-    }); 
+    });
 
     $(DOT_SELECTOR).click(function(){
       dot();
-    }); 
+    });
 
     $(EQUAL_SELECTOR).click(function(){
       equal();
-    }); 
+    });
   }
 
   /**
@@ -324,7 +327,7 @@ var calculator = (function(){
     * Is it number ?.
     * @param {String} str.
     * @return {Boolean} status.
-    */ 
+    */
   var isNumber = function(str){
     if(typeof str == "number" || (str * 0) == 0){
       return true;
@@ -337,7 +340,7 @@ var calculator = (function(){
     * Is it dot ?.
     * @param {String} str.
     * @return {Boolean} status.
-    */  
+    */
   var isDot = function(str){
     return (str === ".");
   }
@@ -385,9 +388,9 @@ var calculator = (function(){
     var prevToken = "";
     var operands = "-+÷×^";
     var operandOne;
-    var operandTwo;     
+    var operandTwo;
     var precedence = {"^":4, "×":3, "÷":3, "+":2, "-":2};
-    var associativity = {"^":"right", "×":"left", "÷":"left", "+":"left", "-":"left"}; 
+    var associativity = {"^":"right", "×":"left", "÷":"left", "+":"left", "-":"left"};
 
     for(var i=0;i < infix.length;i++){
       token = infix[i];
@@ -398,7 +401,7 @@ var calculator = (function(){
         if(isSign(infix[i+1]) || i == infix.length-1){
           postfix.push(parseFloat(currentNumber));
           currentNumber = "";
-        }          
+        }
       }else if(isSign(token)){
 
         operandOne = token;
@@ -411,7 +414,7 @@ var calculator = (function(){
         }
 
         stack.push(operandOne);
-      }          
+      }
     }
 
     while (stack.length() > 0){
@@ -453,8 +456,8 @@ var calculator = (function(){
         appendCurrentScreenFormula(".");
       }
 
-      setCurrentScreenItem(".");    
-      setDotLock(true);      
+      setCurrentScreenItem(".");
+      setDotLock(true);
     }
   }
 
@@ -474,7 +477,7 @@ var calculator = (function(){
       if(currentFormula != ""){
 
         if(isNumber(screenItem)){
-          appendCurrentScreenFormula(sig);        
+          appendCurrentScreenFormula(sig);
         }else if(isDot(screenItem)){
           appendCurrentScreenFormula("0" + sig);
           setDotLock(false);
@@ -483,16 +486,16 @@ var calculator = (function(){
           setMinusLock(true);
         }
 
-        setCurrentScreenItem(sig); 
+        setCurrentScreenItem(sig);
 
       }else if(currentFormula == "" && sig == "-"){
         appendCurrentScreenFormula(sig);
-        setMinusLock(true);  
-        setCurrentScreenItem(sig); 
+        setMinusLock(true);
+        setCurrentScreenItem(sig);
       }
 
-    }   
-  }  
+    }
+  }
 
   /**
     * CE button.
@@ -546,3 +549,34 @@ var calculator = (function(){
   }
 
 }());
+
+var CLOSE_BUTTON_SELECTOR = "#close-button";
+var MINIMIZE_BUTTON_SELECTOR = "#minimize-button";
+var INFO_BUTTON_SELECTOR = "#info-button";
+var LICENCE_BUTTON_SELECTOR = "#licence-button";
+var INFO_MODAL_SELECTOR = "#info-modal";
+var LICENCE_MODAL_SELECTOR = "#licence-modal";
+const remote = require('electron').remote;
+
+$(document).ready(function(){
+ calculator.init();
+
+ $(CLOSE_BUTTON_SELECTOR).click(function(){
+   var window = remote.getCurrentWindow();
+   window.close();
+ });
+
+ $(MINIMIZE_BUTTON_SELECTOR).click(function(){
+   var window = remote.getCurrentWindow();
+   window.minimize();
+ });
+
+ $(INFO_BUTTON_SELECTOR).click(function(){
+  $(INFO_MODAL_SELECTOR).modal('show');
+ });
+
+ $(LICENCE_BUTTON_SELECTOR).click(function(){
+  $(LICENCE_MODAL_SELECTOR).modal('show');
+ });
+
+});
